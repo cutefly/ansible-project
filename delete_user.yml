@@ -1,0 +1,20 @@
+---
+
+- hosts: all
+  remote_user: ansible
+  tasks:
+    - name: Delete Account Force
+      user: name="{{ del_user_name }}"
+            state=absent
+            remove=yes
+            force=yes
+      become: yes
+      become_user: root
+
+    - name: Delete normal user to sudoers
+      lineinfile:
+        dest: /etc/sudoers
+        regexp: "^{{ del_user_name }}"
+        state: absent
+      become: yes
+      become_user: root
