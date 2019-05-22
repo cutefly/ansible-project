@@ -1,0 +1,9 @@
+---
+- hosts: all
+  remote_user: pi
+  tasks:
+  - name: ping test
+    ping:
+    become: yes
+    become_user: root
+
