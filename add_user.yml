@@ -1,6 +1,6 @@
 ---
 - hosts: all
-  remote_user: ansible
+  remote_user: pi
   tasks:
   - name: New System User
     user: name="{{ add_user_name }}"
