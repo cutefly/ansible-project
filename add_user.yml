@@ -19,3 +19,5 @@
     
   - name: Expiring password for user "{{ add_user_name }}"
     shell: chage -d 0 "{{ add_user_name }}"
+    become: yes
+    become_user: root
