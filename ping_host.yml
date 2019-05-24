@@ -1,6 +1,6 @@
 ---
 - hosts: all
-  remote_user: "{{ remote_user | default('pi') }}"
+  remote_user: "{{ user_name | default('pi') }}"
   tasks:
   - name: ping test
     ping:
