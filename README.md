@@ -21,3 +21,15 @@ Template 구성
 ```
 
 > Ansible로 ISMS 취약성 점검 shell script 실행 및 결과물 취합 : https://urban1980.tistory.com/52
+
+### WSL 설정
+
+```
+# wsl에 ssh 서버 설치후 해야 할 일(외부 접속 허용)
+
+# 로컬에서 WSL2로의 Port Foward 연결(관리자권한)
+$my_wsl_address = 172.22.176.1
+$port = 22
+
+netsh interface portproxy add v4tov4 listenport=$port listenaddress='0.0.0.0' connectport=$port connectaddress=$my_wsl_address
+```
