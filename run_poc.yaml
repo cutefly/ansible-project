@@ -1,0 +1,35 @@
+---
+# NAS 연결 및 스크립트 실행
+# 참고 URL : https://urban1980.tistory.com/52
+- hosts: localhost
+  vars:
+    copy_dest: $HOME/
+    copy_src: /home/chris/Documents/ansible-workspace/ansible-project/run_ls.sh
+    result_dest: $HOME/dest/
+    result_file: $HOME/result.txt
+    sh_path: $HOME/run_ls.sh
+  remote_user: appadmin
+  tasks:
+    - name: Copy Shell
+      copy:
+        src: "{{ copy_src }}"
+        dest: "{{ copy_dest }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0744
+
+    - name: "Excute Shell"
+      command: sh "{{ sh_path }}"
+      args:
+        chdir: $HOME
+
+    - name: "Make Directory"
+      file:
+        path: "{{ result_dest }}"
+        state: directory
+
+    - name: "Copy Result"
+      shell: mv {{ result_file }} {{ result_dest }}
+
+    # - name: "Delete Directory"
+    #   command: rm -r {{ result_dest }}
