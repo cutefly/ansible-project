@@ -1,0 +1,26 @@
+# configure-sudo-privileges.yaml
+---
+- name: Configure Sudo Privileges for Specific Groups
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure sudo package is installed
+      package:
+        name: sudo
+        state: present
+
+    - name: Grant sudo privileges to the wheel group on Rocky Linux
+      lineinfile:
+        path: /etc/sudoers
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: '/usr/sbin/visudo -cf %s'
+      when: ansible_os_family == "RedHat"
+
+    - name: Grant sudo privileges to the wheel group on Debian
+      lineinfile:
+        path: /etc/sudoers
+        regexp: '^%sudo'
+        line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+        validate: '/usr/sbin/visudo -cf %s'
+      when: ansible_os_family == "Debian"
