@@ -4,7 +4,7 @@
   # define variables
   vars:
     working_directory: /tmp/working
-    shell_filename: scripts/collect.sh
+    shell_filename: collect.sh
     result_filename: result.txt
     # Current Time : {{ now(utc=true,fmt='%Y-%m-%d %H:%M:%S') }}
     process_time: "{{ now(fmt='%Y%m%d%H%M%S') }}"
@@ -66,10 +66,10 @@
 #      dest: "{{ working_directory }}"
 #      mode: 0744
 
-  - name: Set file permissions
-    file:
-      path: "{{ working_directory }}/{{ shell_filename }}"
-      mode: "0744"
+#  - name: Set file permissions
+#    file:
+#      path: "{{ working_directory }}/{{ shell_filename }}"
+#      mode: "0744"
 
   - name: execute shell script
     become: true
