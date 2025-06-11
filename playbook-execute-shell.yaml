@@ -50,9 +50,14 @@
       state: directory
       mode: 0755
 
+  - name: Clone repository
+    git:
+      repo: https://github.com/cutefly/ansible-project.git
+      dest: "{{ working_directory }}"
+      
   - name: copying execute shell file to remote
     copy:
-      src: "{{ shell_filename }}"
+      src: "scripts/{{ shell_filename }}"
       dest: "{{ working_directory }}"
       mode: 0744
 
