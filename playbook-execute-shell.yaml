@@ -24,8 +24,8 @@
     become_user: root
     ansible.builtin.apt:
       name:
-      - git
-      - curl
+        - git
+        - curl
       state: present
     when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
 
@@ -43,8 +43,8 @@
     become_user: root
     ansible.builtin.dnf:
       name:
-      - git
-      - curl
+        - git
+        - curl
       state: present
     when: ansible_distribution == "RedHat"
 
@@ -69,7 +69,6 @@
     file:
       path: "{{ shell_filename }}"
       mode: "0744"
-      state: present
 
   - name: execute shell script
     become: true
