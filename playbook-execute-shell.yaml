@@ -35,7 +35,7 @@
     become_user: root
     dnf:
       update_cache: yes
-    when: ansible_os_family == 'RedHat'
+    when: ansible_os_family == 'RedHat' or ansible_distribution == 'Rocky'
 
   - name: Install the latest version of Curl on Rocky Linux
     become: true
@@ -46,7 +46,7 @@
         - git
         - curl
       state: present
-    when: ansible_distribution == "RedHat"
+    when: ansible_distribution == "RedHat" or ansible_distribution == 'Rocky'
 
   - name: create directory
     file:
