@@ -23,7 +23,9 @@
     become_method: sudo
     become_user: root
     ansible.builtin.apt:
-      name: curl
+      name:
+      - git
+      - curl
       state: present
     when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
 
@@ -40,7 +42,9 @@
     become_method: sudo
     become_user: root
     ansible.builtin.dnf:
-      name: curl
+      name:
+      - git
+      - curl
       state: present
     when: ansible_distribution == "RedHat"
 
