@@ -67,7 +67,7 @@
 
   - name: Set file permissions
     file:
-      path: "{{ shell_filename }}"
+      path: "{{ working_directory }}/{{ shell_filename }}"
       mode: "0744"
 
   - name: execute shell script
