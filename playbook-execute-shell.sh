@@ -1,0 +1,89 @@
+# ansible-playbook playbook-shell-all.yaml -i ansible/hosts
+---
+- hosts: awx_guests
+  # define variables
+  vars:
+    working_directory: /tmp/working
+    shell_filename: collect.sh
+    result_filename: result.txt
+    # Current Time : {{ now(utc=true,fmt='%Y-%m-%d %H:%M:%S') }}
+    process_time: "{{ now(fmt='%Y%m%d%H%M%S') }}"
+
+  tasks:
+  - name: Update package lists on Ubuntu
+    become: true
+    become_method: sudo
+    become_user: root
+    apt:
+      update_cache: yes
+    when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
+  - name: Install the latest version of Curl on Ubuntu
+    become: true
+    become_method: sudo
+    become_user: root
+    ansible.builtin.apt:
+      name: curl
+      state: present
+    when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
+  - name: Update package lists on Red Hat
+    become: true
+    become_method: sudo
+    become_user: root
+    dnf:
+      update_cache: yes
+    when: ansible_os_family == 'RedHat'
+
+  - name: Install the latest version of Curl on Rocky Linux
+    become: true
+    become_method: sudo
+    become_user: root
+    ansible.builtin.dnf:
+      name: curl
+      state: present
+    when: ansible_distribution == "RedHat"
+
+  - name: create directory
+    file:
+      path: "{{ working_directory }}"
+      state: directory
+      mode: 0755
+
+  - name: copying execute shell file to remote
+    copy:
+      src: "{{ shell_filename }}"
+      dest: "{{ working_directory }}"
+      mode: 0744
+
+  - name: execute shell script
+    become: true
+    become_method: sudo
+    become_user: root
+    shell: sh {{ shell_filename }}
+    args:
+      chdir: "{{ working_directory }}"
+  #- name: fetch result file from remote
+  #  fetch:
+  #    src: "{{ working_directory }}/{{ result_filename }}"
+  #    dest: result/result_{{ inventory_hostname }}.txt
+  #    flat: yes
+
+  - name: execute shell script
+    become: true
+    become_method: sudo
+    become_user: root
+    shell: curl -F "file1=@result.txt;filename={{ process_time }}/result_{{ inventory_hostname }}.txt" "https://{{ hfs_user }}:{{ hfs_pass }}@{{ hfs_domain }}/first/"
+    register: curl
+    args:
+      chdir: "{{ working_directory }}"
+
+  - name: Check contents for emptiness
+    debug:
+      msg: "Upload result : {{ curl.stdout }}"
+    when: curl.stdout != ""
+
+  - name: remove files and directories
+    file:
+      path: "{{ working_directory }}"
+      state: absent
