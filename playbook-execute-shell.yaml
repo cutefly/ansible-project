@@ -58,6 +58,7 @@
     git:
       repo: https://github.com/cutefly/ansible-project.git
       dest: "{{ working_directory }}"
+      force: true
       
 #  - name: copying execute shell file to remote
 #    copy:
