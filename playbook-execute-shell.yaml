@@ -75,7 +75,7 @@
     become: true
     become_method: sudo
     become_user: root
-    shell: sh {{ shell_filename }}
+    shell: sh {{ shell_filename }} > {{ result_filename }} 2>&1
     args:
       chdir: "{{ working_directory }}"
     ignore_errors: yes
@@ -89,7 +89,7 @@
     become: true
     become_method: sudo
     become_user: root
-    shell: curl -F "file1=@result.txt;filename={{ process_time }}/result_{{ inventory_hostname }}.txt" "https://{{ hfs_user }}:{{ hfs_pass }}@{{ hfs_domain }}/first/"
+    shell: curl -F "file1=@{{ result_filename }};filename={{ process_time }}/result_{{ inventory_hostname }}.txt" "https://{{ hfs_user }}:{{ hfs_pass }}@{{ hfs_host }}/first/"
     register: curl
     args:
       chdir: "{{ working_directory }}"
