@@ -78,6 +78,7 @@
     shell: sh {{ shell_filename }}
     args:
       chdir: "{{ working_directory }}"
+    ignore_errors: yes
   #- name: fetch result file from remote
   #  fetch:
   #    src: "{{ working_directory }}/{{ result_filename }}"
