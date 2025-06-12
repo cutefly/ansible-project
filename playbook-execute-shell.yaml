@@ -104,7 +104,7 @@
       path: "{{ working_directory }}/{{ result_filename }}"
       state: absent
       
-#  - name: remove files and directories
-#    file:
-#      path: "{{ working_directory }}"
-#      state: absent
+  - name: remove files and directories
+    file:
+      path: "{{ working_directory }}"
+      state: absent
