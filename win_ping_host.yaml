@@ -1,0 +1,16 @@
+---
+- hosts: all
+  remote_user: "{{ user_name | default('pi') }}"
+  tasks:
+    - name: ping test
+      ansible.builtin.ping:
+      become: yes
+      become_method: sudo
+      become_user: root
+
+    - name: Ping windows
+      ansible.builtin.win_ping:
+      when: ansible_distribution == 'Windows'
+      become: yes
+      become_method: runas
+      become_user: pi
