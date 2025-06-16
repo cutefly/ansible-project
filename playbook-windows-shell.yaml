@@ -12,7 +12,7 @@
 
   tasks:
     - name: Check git installed
-      win_stat: path="{{ git_path }}"
+      win_stat: path="C:\Program Files\Git\bin\git.bat"
       register: git_file
 
     - name: Download Git for Windows installer
