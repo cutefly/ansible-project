@@ -7,10 +7,11 @@
       become: yes
       become_method: sudo
       become_user: root
+      when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian' or ansible_distribution == 'RedHat'  or ansible_distribution == 'Rocky'
 
     - name: Ping windows
       ansible.builtin.win_ping:
-      when: ansible_distribution == 'Windows'
       become: yes
       become_method: runas
       become_user: pi
+      when: ansible_distribution == 'Windows'
