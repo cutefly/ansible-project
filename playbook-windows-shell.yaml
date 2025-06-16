@@ -3,8 +3,8 @@
 - hosts: windows_guests
   # define variables
   vars:
-    working_directory: c:\Temp\Working
-    shell_filename: Win_v41-stdout.bat
+    working_directory: C:\Temp\Working
+    shell_filename: Win_v4.1-stdout.bat
     result_filename: Result.txt
     csv_filename: Result.csv
     git_path: 'C:\Program Files\Git\cmd\git.exe'
