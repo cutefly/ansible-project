@@ -11,19 +11,24 @@
     process_time: "{{ now(fmt='%Y%m%d%H%M%S') }}"
 
   tasks:
-    # - name: Download Git for Windows installer
-    #   win_get_url:
-    #     url: "https://github.com/git-for-windows/git/releases/download/v2.45.2.windows.1/Git-2.45.2-64-bit.exe" # Replace with the latest version
-    #     dest: "C:\\Windows\\Temp\\Git-Installer.exe"
-    #   register: download_result
+    - name: Check git installed
+      win_stat: path= "{{ git_path }}"
+      register: git_file
 
-    # - name: Install Git (silent)
-    #   win_package:
-    #     path: "C:\\Windows\\Temp\\Git-Installer.exe"
-    #     product_id: "Git for Windows" # Replace with the actual Product ID if different
-    #     state: present
-    #     arguments: "/SILENT /NORESTART"
-    #   when: download_result.changed # Only install if the installer was downloaded
+    - name: Download Git for Windows installer
+      win_get_url:
+        url: "https://github.com/git-for-windows/git/releases/download/v2.45.2.windows.1/Git-2.45.2-64-bit.exe" # Replace with the latest version
+        dest: "C:\\Windows\\Temp\\Git-Installer.exe"
+      register: download_result
+      when: git_file.stat.exists != True
+
+    - name: Install Git (silent)
+      win_package:
+        path: "C:\\Windows\\Temp\\Git-Installer.exe"
+        product_id: "Git for Windows" # Replace with the actual Product ID if different
+        state: present
+        arguments: "/SILENT /NORESTART"
+      when: download_result.changed # Only install if the installer was downloaded
 
     - name: create directory
       ansible.windows.win_file:
@@ -32,7 +37,7 @@
         mode: "0775"
 
     - name: Clone repository
-      ansible.windows.win_shell: cmd.exe /c "C:\Program Files\Git\bin\git.exe" clone https://github.com/cutefly/ansible-project.git {{ working_directory }}
+      ansible.windows.win_shell: cmd.exe /c "{{ git_path }}" clone https://github.com/cutefly/ansible-project.git {{ working_directory }}
       register: git_clone_result
 
     - name: execute shell script
