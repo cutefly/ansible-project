@@ -31,7 +31,7 @@
         mode: "0775"
 
     - name: Clone repository
-      git:
+      ansible.windows.win_git:
         repo: https://github.com/cutefly/ansible-project.git
         dest: "{{ working_directory }}"
         force: true
