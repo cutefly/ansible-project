@@ -25,10 +25,10 @@
       when: download_result.changed # Only install if the installer was downloaded
 
     - name: create directory
-      file:
+      ansible.windows.win_file:
         path: "{{ working_directory }}"
         state: directory
-        mode: 0755
+        mode: "0775"
 
     - name: Clone repository
       git:
@@ -60,11 +60,11 @@
       when: curl.stdout != ""
 
     - name: Remove result file (delete file)
-      ansible.builtin.file:
+      ansible.windows.win_file:
         path: "{{ working_directory }}/{{ result_filename }}"
         state: absent
 
     - name: remove files and directories
-      file:
+      ansible.windows.win_file:
         path: "{{ working_directory }}"
         state: absent
