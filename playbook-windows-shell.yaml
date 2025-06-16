@@ -4,6 +4,7 @@
   # define variables
   become: true
   become_method: runas
+  become_user: pi
   vars:
     working_directory: C:\Temp\Working
     shell_filename: Win_v4.1-stdout.bat
