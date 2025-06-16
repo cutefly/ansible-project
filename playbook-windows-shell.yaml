@@ -34,7 +34,8 @@
       win_git:
         repo: https://github.com/cutefly/ansible-project.git
         dest: "{{ working_directory }}"
-        force: true
+        clone: yes
+      register: git_clone_result
 
     - name: execute shell script
       become: true
