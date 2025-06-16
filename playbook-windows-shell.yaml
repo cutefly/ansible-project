@@ -31,10 +31,11 @@
         mode: "0775"
 
     - name: Clone repository
-      win_git:
-        repo: https://github.com/cutefly/ansible-project.git
-        dest: "{{ working_directory }}"
-        clone: yes
+      ansible.windows.win_shell: C:\Program Files\Git\bin\git.exe clone https://github.com/cutefly/ansible-project.git {{ working_directory }}
+      # win_git:
+      #   repo: https://github.com/cutefly/ansible-project.git
+      #   dest: "{{ working_directory }}"
+      #   clone: yes
       register: git_clone_result
 
     - name: execute shell script
