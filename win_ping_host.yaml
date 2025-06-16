@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: awx_guests
   remote_user: "{{ user_name | default('pi') }}"
   tasks:
     - name: ping test

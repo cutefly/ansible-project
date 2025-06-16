@@ -1,6 +1,6 @@
 # ansible-playbook playbook-shell-all.yaml -i ansible/hosts
 ---
-- hosts: awx_guests
+- hosts: linux_guests
   # define variables
   vars:
     working_directory: /tmp/working
@@ -10,101 +10,101 @@
     process_time: "{{ now(fmt='%Y%m%d%H%M%S') }}"
 
   tasks:
-  - name: Update package lists on Ubuntu
-    become: true
-    become_method: sudo
-    become_user: root
-    apt:
-      update_cache: yes
-    when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+    - name: Update package lists on Ubuntu
+      become: true
+      become_method: sudo
+      become_user: root
+      apt:
+        update_cache: yes
+      when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
 
-  - name: Install the latest version of Curl on Ubuntu
-    become: true
-    become_method: sudo
-    become_user: root
-    ansible.builtin.apt:
-      name:
-        - git
-        - curl
-      state: present
-    when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+    - name: Install the latest version of Curl on Ubuntu
+      become: true
+      become_method: sudo
+      become_user: root
+      ansible.builtin.apt:
+        name:
+          - git
+          - curl
+        state: present
+      when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
 
-  - name: Update package lists on Red Hat
-    become: true
-    become_method: sudo
-    become_user: root
-    dnf:
-      update_cache: yes
-    when: ansible_os_family == 'RedHat' or ansible_distribution == 'Rocky'
+    - name: Update package lists on Red Hat
+      become: true
+      become_method: sudo
+      become_user: root
+      dnf:
+        update_cache: yes
+      when: ansible_os_family == 'RedHat' or ansible_distribution == 'Rocky'
 
-  - name: Install the latest version of Curl on Rocky Linux
-    become: true
-    become_method: sudo
-    become_user: root
-    ansible.builtin.dnf:
-      name:
-        - git
-        - curl
-      state: present
-    when: ansible_distribution == "RedHat" or ansible_distribution == 'Rocky'
+    - name: Install the latest version of Curl on Rocky Linux
+      become: true
+      become_method: sudo
+      become_user: root
+      ansible.builtin.dnf:
+        name:
+          - git
+          - curl
+        state: present
+      when: ansible_distribution == "RedHat" or ansible_distribution == 'Rocky'
 
-  - name: create directory
-    file:
-      path: "{{ working_directory }}"
-      state: directory
-      mode: 0755
+    - name: create directory
+      file:
+        path: "{{ working_directory }}"
+        state: directory
+        mode: 0755
 
-  - name: Clone repository
-    git:
-      repo: https://github.com/cutefly/ansible-project.git
-      dest: "{{ working_directory }}"
-      force: true
-      
-#  - name: copying execute shell file to remote
-#    copy:
-#      src: "scripts/{{ shell_filename }}"
-#      dest: "{{ working_directory }}"
-#      mode: 0744
+    - name: Clone repository
+      git:
+        repo: https://github.com/cutefly/ansible-project.git
+        dest: "{{ working_directory }}"
+        force: true
 
-#  - name: Set file permissions
-#    file:
-#      path: "{{ working_directory }}/{{ shell_filename }}"
-#      mode: "0744"
+    #  - name: copying execute shell file to remote
+    #    copy:
+    #      src: "scripts/{{ shell_filename }}"
+    #      dest: "{{ working_directory }}"
+    #      mode: 0744
 
-  - name: execute shell script
-    become: true
-    become_method: sudo
-    become_user: root
-    shell: sh {{ shell_filename }} > {{ result_filename }} 2>&1
-    args:
-      chdir: "{{ working_directory }}"
-    ignore_errors: yes
-  #- name: fetch result file from remote
-  #  fetch:
-  #    src: "{{ working_directory }}/{{ result_filename }}"
-  #    dest: result/result_{{ inventory_hostname }}.txt
-  #    flat: yes
+    #  - name: Set file permissions
+    #    file:
+    #      path: "{{ working_directory }}/{{ shell_filename }}"
+    #      mode: "0744"
 
-  - name: execute shell script
-    become: true
-    become_method: sudo
-    become_user: root
-    shell: curl -F "file1=@{{ result_filename }};filename={{ process_time }}/result_{{ inventory_hostname }}.txt" "https://{{ hfs_user }}:{{ hfs_pass }}@{{ hfs_host }}/first/"
-    register: curl
-    args:
-      chdir: "{{ working_directory }}"
+    - name: execute shell script
+      become: true
+      become_method: sudo
+      become_user: root
+      shell: sh {{ shell_filename }} > {{ result_filename }} 2>&1
+      args:
+        chdir: "{{ working_directory }}"
+      ignore_errors: yes
+    #- name: fetch result file from remote
+    #  fetch:
+    #    src: "{{ working_directory }}/{{ result_filename }}"
+    #    dest: result/result_{{ inventory_hostname }}.txt
+    #    flat: yes
 
-  - name: Check contents for emptiness
-    debug:
-      msg: "Upload result : {{ curl.stdout }}"
-    when: curl.stdout != ""
+    - name: execute shell script
+      become: true
+      become_method: sudo
+      become_user: root
+      shell: curl -F "file1=@{{ result_filename }};filename={{ process_time }}/result_{{ inventory_hostname }}.txt" "https://{{ hfs_user }}:{{ hfs_pass }}@{{ hfs_host }}/first/"
+      register: curl
+      args:
+        chdir: "{{ working_directory }}"
 
-  - name: Remove result file (delete file)
-    ansible.builtin.file:
-      path: "{{ working_directory }}/{{ result_filename }}"
-      state: absent
-      
-  - name: remove files and directories
-    file:
-      path: "{{ working_directory }}"
-      state: absent
+    - name: Check contents for emptiness
+      debug:
+        msg: "Upload result : {{ curl.stdout }}"
+      when: curl.stdout != ""
+
+    - name: Remove result file (delete file)
+      ansible.builtin.file:
+        path: "{{ working_directory }}/{{ result_filename }}"
+        state: absent
+
+    - name: remove files and directories
+      file:
+        path: "{{ working_directory }}"
+        state: absent
