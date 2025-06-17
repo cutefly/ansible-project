@@ -47,14 +47,16 @@
         mode: "0775"
 
     - name: Clone repository
-      ansible.windows.win_shell: cmd.exe /c "{{ git_path }}" clone https://github.com/cutefly/ansible-project.git {{ working_directory }}
+      ansible.windows.win_shell: |
+        "{{ git_path }}" clone https://github.com/cutefly/ansible-project.git {{ working_directory }}
       register: git_clone_result
 
     - name: execute shell script
       become: true
       become_method: runas
       become_user: pi
-      ansible.windows.win_shell: cmd.exe /c {{ working_directory }}\{{ shell_filename }} -y > {{ result_filename }} 2>&1
+      ansible.windows.win_shell: |
+        {{ working_directory }}\{{ shell_filename }} -y > {{ result_filename }} 2>&1
       args:
         chdir: "{{ working_directory }}"
         # encoding: euc-kr
@@ -65,7 +67,8 @@
       become: true
       become_method: runas
       become_user: pi
-      ansible.windows.win_shell: cmd.exe /c curl -F "file1=@{{ result_filename }};filename={{ process_time }}/result_{{ inventory_hostname }}.txt" "https://{{ hfs_user }}:{{ hfs_pass }}@{{ hfs_host }}/first/"
+      ansible.windows.win_shell: |
+        curl -F "file1=@{{ result_filename }};filename={{ process_time }}/result_{{ inventory_hostname }}.txt" "https://{{ hfs_user }}:{{ hfs_pass }}@{{ hfs_host }}/first/"
       register: curl
       args:
         chdir: "{{ working_directory }}"
@@ -74,7 +77,8 @@
       become: true
       become_method: runas
       become_user: pi
-      ansible.windows.win_shell: cmd.exe /c curl -F "file1=@{{ csv_filename}};filename={{ process_time }}/result_{{ inventory_hostname }}.csv" "https://{{ hfs_user }}:{{ hfs_pass }}@{{ hfs_host }}/first/"
+      ansible.windows.win_shell: |
+        curl -F "file1=@{{ csv_filename}};filename={{ process_time }}/result_{{ inventory_hostname }}.csv" "https://{{ hfs_user }}:{{ hfs_pass }}@{{ hfs_host }}/first/"
       register: curl
       args:
         chdir: "{{ working_directory }}"
