@@ -87,7 +87,7 @@
     #     path: "{{ working_directory }}/{{ result_filename }}"
     #     state: absent
 
-    - name: remove files and directories
-      ansible.windows.win_file:
-        path: "{{ working_directory }}"
-        state: absent
+    # - name: remove files and directories
+    #   ansible.windows.win_file:
+    #     path: "{{ working_directory }}"
+    #     state: absent

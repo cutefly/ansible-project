@@ -5,7 +5,7 @@ pushd %~dp0
 TITLE KPC WINDOWS SYSTEM / SECURITY CHECK
 
 ::영문으로 변경
-chcp 437
+::chcp 437
 
 cls
 

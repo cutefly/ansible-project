@@ -7,9 +7,14 @@
     shell_filename: linux-stdout.sh
     result_filename: result.txt
     # Current Time : {{ now(utc=true,fmt='%Y-%m-%d %H:%M:%S') }}
-    process_time: "{{ now(fmt='%Y%m%d%H%M%S') }}"
+    # process_time: "{{ now(fmt='%Y%m%d%H%M%S') }}"
 
   tasks:
+    # lookup을 사용하여 현재 날짜 및 시간 가져오기
+    - name: 현재 날짜 및 시간 조회
+      set_fact:
+        process_time: "{{ lookup('pipe', 'date +%Y%m%d_%H%M%S') }}"
+
     - name: Update package lists on Ubuntu
       become: true
       become_method: sudo
