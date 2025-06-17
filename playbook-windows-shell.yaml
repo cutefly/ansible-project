@@ -55,6 +55,7 @@
       become_method: runas
       become_user: pi
       ansible.windows.win_shell: cmd.exe /c {{ working_directory }}\{{ shell_filename }} -y > {{ result_filename }} 2>&1
+      encoding: utf-8
       args:
         chdir: "{{ working_directory }}"
       ignore_errors: yes
