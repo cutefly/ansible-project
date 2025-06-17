@@ -1,0 +1,10 @@
+# ansible-playbook playbook-shell-all.yaml -i ansible/hosts
+---
+- hosts: powershell_guests
+  tasks:
+    - name: Run a PowerShell command
+      ansible.windows.win_shell: |
+        Get-ChildItem C:\
+      register: result
+    - debug:
+        var: result.stdout_lines
