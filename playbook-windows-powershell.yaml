@@ -1,10 +1,95 @@
 # ansible-playbook playbook-shell-all.yaml -i ansible/hosts
 ---
 - hosts: powershell_guests
+  # become: true
+  # become_method: runas
+  # become_user: pi
+
+  # define variables
+  vars:
+    working_directory: C:\Temp\Working
+    shell_filename: Win_v4.1-stdout.bat
+    result_filename: Result.txt
+    csv_filename: Result.csv
+    git_path: 'C:\Program Files\Git\cmd\git.exe'
+    # Current Time : {{ now(utc=true,fmt='%Y-%m-%d %H:%M:%S') }}
+    #process_time: "{{ now(fmt='%Y%m%d/%H%M%S') }}"
+
   tasks:
-    - name: Run a PowerShell command
-      ansible.windows.win_shell: |
-        Get-ChildItem C:\
-      register: result
-    - debug:
-        var: result.stdout_lines
+    # lookup을 사용하여 현재 날짜 및 시간 가져오기
+    - name: 현재 날짜 및 시간 조회
+      set_fact:
+        process_time: "{{ lookup('pipe', 'date +%Y%m%d_%H%M%S') }}"
+
+    - name: Check git installed
+      win_stat: path="{{ git_path }}"
+      register: git_file
+
+    - name: Download Git for Windows installer
+      win_get_url:
+        url: "https://github.com/git-for-windows/git/releases/download/v2.45.2.windows.1/Git-2.45.2-64-bit.exe" # Replace with the latest version
+        dest: "C:\\Windows\\Temp\\Git-Installer.exe"
+      register: download_result
+      when: git_file.stat.exists != True
+
+    - name: Install Git (silent)
+      win_package:
+        path: "C:\\Windows\\Temp\\Git-Installer.exe"
+        product_id: "Git for Windows" # Replace with the actual Product ID if different
+        state: present
+        arguments: "/SILENT /NORESTART"
+      when: download_result.changed # Only install if the installer was downloaded
+
+    - name: create directory
+      ansible.windows.win_file:
+        path: "{{ working_directory }}"
+        state: directory
+        mode: "0775"
+
+    - name: Clone repository
+      ansible.windows.win_shell: cmd.exe /c "{{ git_path }}" clone https://github.com/cutefly/ansible-project.git {{ working_directory }}
+      register: git_clone_result
+
+    - name: execute shell script
+      become: true
+      become_method: runas
+      become_user: pi
+      ansible.windows.win_shell: cmd.exe /c {{ working_directory }}\{{ shell_filename }} -y > {{ result_filename }} 2>&1
+      args:
+        chdir: "{{ working_directory }}"
+        # encoding: euc-kr
+        # output_encoding_override: euc-kr
+      ignore_errors: yes
+
+    - name: Upload result file
+      become: true
+      become_method: runas
+      become_user: pi
+      ansible.windows.win_shell: cmd.exe /c curl -F "file1=@{{ result_filename }};filename={{ process_time }}/result_{{ inventory_hostname }}.txt" "https://{{ hfs_user }}:{{ hfs_pass }}@{{ hfs_host }}/first/"
+      register: curl
+      args:
+        chdir: "{{ working_directory }}"
+
+    - name: Upload csv file
+      become: true
+      become_method: runas
+      become_user: pi
+      ansible.windows.win_shell: cmd.exe /c curl -F "file1=@{{ csv_filename}};filename={{ process_time }}/result_{{ inventory_hostname }}.csv" "https://{{ hfs_user }}:{{ hfs_pass }}@{{ hfs_host }}/first/"
+      register: curl
+      args:
+        chdir: "{{ working_directory }}"
+
+    - name: Check contents for emptiness
+      debug:
+        msg: "Upload result : {{ curl.stdout }}"
+      when: curl.stdout != ""
+
+    # - name: Remove result file (delete file)
+    #   ansible.windows.win_file:
+    #     path: "{{ working_directory }}/{{ result_filename }}"
+    #     state: absent
+
+    # - name: remove files and directories
+    #   ansible.windows.win_file:
+    #     path: "{{ working_directory }}"
+    #     state: absent

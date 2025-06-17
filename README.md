@@ -33,3 +33,10 @@ $port = 22
 
 netsh interface portproxy add v4tov4 listenport=$port listenaddress='0.0.0.0' connectport=$port connectaddress=$my_wsl_address
 ```
+
+## SSH
+
+```
+Powershell을 ssh 기본 쉘로 변경(https://jjam89.tistory.com/164)
+$ $New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force
+```
