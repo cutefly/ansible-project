@@ -1,4 +1,4 @@
-﻿#!/bin/sh
+#!/bin/sh
 HOSTNAME=`hostname`
 DATE=`date -I`
 
