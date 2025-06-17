@@ -13,9 +13,14 @@
     csv_filename: Result.csv
     git_path: 'C:\Program Files\Git\cmd\git.exe'
     # Current Time : {{ now(utc=true,fmt='%Y-%m-%d %H:%M:%S') }}
-    process_time: "{{ now(fmt='%Y%m%d/%H%M%S') }}"
+    #process_time: "{{ now(fmt='%Y%m%d/%H%M%S') }}"
 
   tasks:
+    # lookup을 사용하여 현재 날짜 및 시간 가져오기
+    - name: 현재 날짜 및 시간 조회
+      set_fact:
+        process_time: "{{ lookup('pipe', 'date +%Y%m%d_%H%M%S') }}"
+
     - name: Check git installed
       win_stat: path="{{ git_path }}"
       register: git_file
