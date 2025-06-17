@@ -1,10 +1,11 @@
 # ansible-playbook playbook-shell-all.yaml -i ansible/hosts
 ---
 - hosts: windows_guests
+  # become: true
+  # become_method: runas
+  # become_user: pi
+
   # define variables
-  become: true
-  become_method: runas
-  become_user: pi
   vars:
     working_directory: C:\Temp\Working
     shell_filename: Win_v4.1-stdout.bat
@@ -12,7 +13,7 @@
     csv_filename: Result.csv
     git_path: 'C:\Program Files\Git\cmd\git.exe'
     # Current Time : {{ now(utc=true,fmt='%Y-%m-%d %H:%M:%S') }}
-    process_time: "{{ now(fmt='%Y%m%d%H%M%S') }}"
+    process_time: "{{ now(fmt='%Y%m%d/%H%M%S') }}"
 
   tasks:
     - name: Check git installed
