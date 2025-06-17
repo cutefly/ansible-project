@@ -57,7 +57,8 @@
       ansible.windows.win_shell: cmd.exe /c {{ working_directory }}\{{ shell_filename }} -y > {{ result_filename }} 2>&1
       args:
         chdir: "{{ working_directory }}"
-        output_encoding_override: utf-8
+        encoding: euc-kr
+        output_encoding_override: euc-kr
       ignore_errors: yes
 
     - name: Upload result file
