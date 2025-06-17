@@ -48,7 +48,7 @@
 
     - name: Clone repository
       ansible.windows.win_shell: |
-        "{{ git_path }}" clone https://github.com/cutefly/ansible-project.git {{ working_directory }}
+        cmd /c "{{ git_path }}" clone https://github.com/cutefly/ansible-project.git {{ working_directory }}
       register: git_clone_result
 
     - name: execute shell script
